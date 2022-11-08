@@ -35,6 +35,13 @@ async function run(){
             res.send(services);
         })
 
+        app.get('/homeServices', async(req,res)=>{
+            const query = {};
+            const cursor = serviceCollection.find(query).limit(3);
+            const services = await cursor.toArray();
+            res.send(services);
+        })
+
         app.get('/services/:id', async(req,res)=>{
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
@@ -43,7 +50,28 @@ async function run(){
         })
 
         // Reviews Api
-        
+        app.post('/reviews', async(req,res)=>{
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
+        app.get('/reviews', async(req,res)=>{
+            let query = {};
+            if(req.query.serviceId){
+                query = {
+                    serviceId: req.query.serviceId,
+                }
+            }
+            if(req.query.userEmail){
+                query = {
+                    userEmail: req.query.userEmail,
+                }
+            }
+            const cursor = reviewCollection.find(query).sort({time:-1});
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
 
 
     }
