@@ -63,6 +63,22 @@ async function run(){
             res.send(result);
         })
 
+        app.put('/reviews/:id', async(req,res) =>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const review = req.body;
+            const option = {upsert: true};
+            const updateReview = {
+                $set:{
+                    userName : review.userName,
+                    userReview : review.userReview,
+                    time : review.time,
+                }
+            }
+            const result = await reviewCollection.updateOne(filter,updateReview,option);
+            res.send(result)
+        })
+
         app.get('/reviews/:id', async(req,res) =>{
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
