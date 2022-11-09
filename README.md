@@ -1,8 +1,8 @@
 # PHOTO-PHACTORY #
 
-### Live Site Link :  ###
+### Live Site Link : https://photo-phactory-amt.web.app/ ###
 
-### Live Server Link : ###
+### Live Server Link : https://photo-phactory-server.vercel.app/services ###
 
 ### Features and Functionality : ###
 
