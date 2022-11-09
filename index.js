@@ -21,6 +21,12 @@ async function run(){
         const serviceCollection = client.db('photophactory').collection('services');
         const reviewCollection = client.db('photophactory').collection('reviews');
 
+        // JWT Token
+        app.post('/jwt',(req,res)=>{
+            const user = req.body;
+            // const token = jwt.sign
+        })
+
         // services api
         app.post('/services', async(req,res)=>{
             const service = req.body;
