@@ -20,12 +20,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 function verifyJWT(req, res, next){
     const authHeader = req.headers.authorization;
     if(!authHeader){
-        res.status(401).send({message: 'Unauthorized Access'});
+        return res.status(401).send({message: 'Unauthorized Access'});
     }
     const token = authHeader.split(' ')[1];
+
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decoded){
         if(err){
-            res.status(401).send({message: 'Unauthorized Access'});
+            return res.status(403).send({message: 'Forbidden Access'});
         }
         req.decoded = decoded;
         next();
@@ -95,7 +96,6 @@ async function run(){
                 $set:{
                     userName : review.userName,
                     userReview : review.userReview,
-                    time : review.time,
                 }
             }
             const result = await reviewCollection.updateOne(filter,updateReview,option);
@@ -111,17 +111,27 @@ async function run(){
 
 
 
+        app.get('/myreviews', verifyJWT, async(req,res)=>{
+            const decoded = req.decoded;
+            if(decoded.email !== req.query.userEmail){
+                return res.status(403).send({message: 'Unauthorized Access'});
+            }
+            let query = {};
+            if(req.query.userEmail){
+                query = {
+                    userEmail: req.query.userEmail,
+                }
+            }
+            const cursor = reviewCollection.find(query).sort({time:-1});
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
 
-        app.get('/reviews', verifyJWT, async(req,res)=>{
+        app.get('/reviews', async(req,res)=>{
             let query = {};
             if(req.query.serviceId){
                 query = {
                     serviceId: req.query.serviceId,
-                }
-            }
-            if(req.query.userEmail){
-                query = {
-                    userEmail: req.query.userEmail,
                 }
             }
             const cursor = reviewCollection.find(query).sort({time:-1});
