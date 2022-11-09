@@ -37,7 +37,7 @@ async function run(){
 
         app.get('/homeServices', async(req,res)=>{
             const query = {};
-            const cursor = serviceCollection.find(query).limit(3);
+            const cursor = serviceCollection.find(query).sort({$natural:-1}).limit(3);
             const services = await cursor.toArray();
             res.send(services);
         })
